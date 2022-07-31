@@ -6,6 +6,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.example.android.trackmysleepquality.database.SleepDatabase
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
 import com.example.android.trackmysleepquality.database.SleepNight
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -31,9 +32,9 @@ class SleepDatabaseTest {
         // Using an in-memory database because the information stored here disappears when the
         // process is killed.
         db = Room.inMemoryDatabaseBuilder(context, SleepDatabase::class.java)
-                // Allowing main thread queries, just for testing.
-                .allowMainThreadQueries()
-                .build()
+            // Allowing main thread queries, just for testing.
+            .allowMainThreadQueries()
+            .build()
         sleepDao = db.sleepDatabaseDao
     }
 
@@ -46,10 +47,11 @@ class SleepDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun insertAndGetNight() {
-        val night = SleepNight()    
-        sleepDao.insert(night)
-        val tonight = sleepDao.getTonight()
-        assertEquals(tonight?.sleepQuality, -1)
+        runBlocking {
+            val night = SleepNight()
+            sleepDao.insert(night)
+            val tonight = sleepDao.getTonight()
+            assertEquals(tonight?.sleepQuality, -1)
+        }
     }
 }
-
